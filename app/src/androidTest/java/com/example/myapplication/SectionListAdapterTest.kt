@@ -55,6 +55,10 @@ class SectionListAdapterTest {
 
         }
 
+        override fun getViewType(position: Int): Int? {
+            return null
+        }
+
     }
 
     @Test

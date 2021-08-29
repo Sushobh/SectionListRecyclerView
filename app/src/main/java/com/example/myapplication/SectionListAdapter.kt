@@ -4,14 +4,29 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class SectionListAdapter(val sections : List<Section>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class SectionListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(),Section.ChangeListener{
 
+    var sections = arrayListOf<Section>()
+
+
+    override fun getItemViewType(position: Int): Int {
+        val sectionForPosition = findSectionForPosition(position)
+        sectionForPosition?.let { section ->
+            val startIndex = findStartIndexForSection(section)
+            startIndex?.let { it ->
+                val viewType = section.getViewType(position-it)
+                return viewType ?: 0
+            }
+        }
+        return 0
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return sections.find {
+        val section = sections.find {
             it.getViewTypes().contains(viewType)
-        }?.getViewHolder(parent,viewType) ?: object : RecyclerView.ViewHolder(View(parent.context)) {}
-
+        }
+        val viewHolder = section?.getViewHolder(parent,viewType)
+        return viewHolder ?: object : RecyclerView.ViewHolder(View(parent.context)) {}
     }
 
     fun findSectionForPosition(position: Int) : Section? {
@@ -59,5 +74,31 @@ class SectionListAdapter(val sections : List<Section>) : RecyclerView.Adapter<Re
         }
         return count
     }
+
+    override fun onRangeRemoved(startIndex: Int, count: Int, section: Section) {
+        val index = findStartIndexForSection(section)
+        if(index != null){
+            notifyItemRangeRemoved(index+startIndex,count)
+        }
+    }
+
+    override fun onRangeAdded(startIndex: Int, count: Int, section: Section) {
+        val index = findStartIndexForSection(section)
+        if(index != null){
+            notifyItemRangeInserted(index+startIndex,count)
+        }
+    }
+
+    override fun onItemChanged(startIndex: Int, section: Section) {
+        val index = findStartIndexForSection(section)
+        if(index != null){
+            notifyItemChanged(index+startIndex)
+        }
+    }
+
+    override fun isViewTypeNumberAvailable(viewTypeNumber: Int, section: Section): Boolean {
+        TODO("Not yet implemented")
+    }
+
 
 }

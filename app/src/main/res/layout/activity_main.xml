@@ -12,18 +12,13 @@
        android:orientation="vertical"
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
-       <TextView
-           android:gravity="center"
-           android:padding="20dp"
-           android:text="BOOMBOT"
-           android:id="@+id/helloworld"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"/>
 
-       <com.example.myapplication.MyListView
+
+       <androidx.recyclerview.widget.RecyclerView
            android:id="@+id/list_view"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"/>
+
    </LinearLayout>
 
 </ScrollView>
