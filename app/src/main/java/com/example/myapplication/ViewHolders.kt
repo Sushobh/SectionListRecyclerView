@@ -4,14 +4,20 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class GroupViewHolder(changeListener : Section.ChangeListener, view : View) : SectionListAdapter.PartOfSectionViewHolder(changeListener,view){
+class GroupViewHolder(val changeListener : Section.ChangeListener, view : View) : SectionListAdapter.PartOfSectionViewHolder(changeListener,view){
 
     val textView = view.findViewById<TextView>(R.id.textview)
 
     init {
         view.setOnClickListener {
-            val item = findItemAtPosition()
-            toString()
+            toggleExpansion()
+        }
+    }
+
+    fun toggleExpansion(){
+        val section = changeListener.findSectionForPosition(adapterPosition)
+        if(section is GroupedSection){
+              section.toggleGroupFromAdapterPosition(adapterPosition)
         }
     }
 }

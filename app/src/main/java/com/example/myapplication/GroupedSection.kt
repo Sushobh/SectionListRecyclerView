@@ -1,9 +1,12 @@
 package com.example.myapplication
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
+
+
 
 
 
@@ -81,5 +84,18 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
         }
     }
 
+    fun toggleGroupFromAdapterPosition(adapterPosition : Int){
+        val internalPosition = changeListener.getPositionInsideSection(adapterPosition,this)
+        groupPositions.entries.forEach {
+            if(it.value == internalPosition){
+                if(isExpanded(it.key)){
+                    collapseGroup(it.key)
+                }
+                else {
+                    expandGroup(it.key)
+                }
+            }
+        }
+    }
 
 }

@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class SectionListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Section.ChangeListener{
+class SectionListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Section.ChangeListener{
 
     open class PartOfSectionViewHolder(val sectionListener : Section.ChangeListener,val view : View) : RecyclerView.ViewHolder(view) {
           fun findItemAtPosition() : Any? {

@@ -32,6 +32,10 @@ class MainActivity : AppCompatActivity() {
         sectionAdapter.sections = arrayListOf(section,section1)
         recyclerView.adapter = sectionAdapter
 
+        postDelayed(3000) {
+            section.collapseGroup(1)
+        }
+
     }
 
     fun postDelayed(time : Long,callback : () -> Unit){
