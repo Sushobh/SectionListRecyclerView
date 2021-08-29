@@ -4,18 +4,32 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class GroupViewHolder(val view : View) : RecyclerView.ViewHolder(view){
+class GroupViewHolder(changeListener : Section.ChangeListener, view : View) : SectionListAdapter.PartOfSectionViewHolder(changeListener,view){
+
     val textView = view.findViewById<TextView>(R.id.textview)
 
+    init {
+        view.setOnClickListener {
+            val item = findItemAtPosition()
+            toString()
+        }
+    }
 }
 
-class ChildViewHolder(val view : View) : RecyclerView.ViewHolder(view){
+class ChildViewHolder(changeListener : Section.ChangeListener, view : View) : SectionListAdapter.PartOfSectionViewHolder(changeListener,view){
     val textView = view.findViewById<TextView>(R.id.textview)
+    init {
+        view.setOnClickListener {
+            val item = findItemAtPosition()
+
+            toString()
+        }
+    }
 }
 
-class LoaderScreenViewHolder(val view : View) : RecyclerView.ViewHolder(view) {
 
-}
+
+
 
 data class GroupData(val text  : String, val children : ArrayList<ChildData>)
 

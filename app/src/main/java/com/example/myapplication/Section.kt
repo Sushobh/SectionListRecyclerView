@@ -11,10 +11,8 @@ abstract class Section(protected val changeListener: ChangeListener) {
         fun onRangeAdded(startIndex: Int, count: Int,section : Section)
         fun onItemChanged(startIndex: Int,section : Section)
         fun isViewTypeNumberAvailable(viewTypeNumber: Int,section : Section): Boolean
-    }
-
-    open class Root {
-
+        fun getPositionInsideSection(adapterPosition : Int,section: Section) : Int?
+        fun findSectionForPosition(adapterPosition: Int) : Section?
     }
 
 
@@ -28,25 +26,15 @@ abstract class Section(protected val changeListener: ChangeListener) {
 
 
 
-    fun <T : Root> addRoot(root: T) {
-        if(items.size >= 1){
-            items.removeAt(0)
-        }
-        items.add(0, root)
-        changeListener.onItemChanged(0,this)
-    }
+
 
     fun addItems(itemsToAdd: List<Any>, indexAt: Int): Boolean {
-        if(indexAt == 0 || indexAt > getLength()){
+        if(indexAt > getLength()){
             return false
         }
-        if (items.size == 0 || !(items[0] is Root)) {
-            return false
-        } else {
-            items.addAll(indexAt, itemsToAdd)
-            changeListener.onRangeAdded(indexAt, itemsToAdd.size,this)
-            return true
-        }
+        items.addAll(indexAt, itemsToAdd)
+        changeListener.onRangeAdded(indexAt, itemsToAdd.size,this)
+        return true
     }
 
 
@@ -67,8 +55,18 @@ abstract class Section(protected val changeListener: ChangeListener) {
         return items.size
     }
 
-    protected fun getItem(position : Int) : Any? {
+    fun getItem(position : Int) : Any? {
         return items.get(position)
+    }
+
+    fun getItemAtAdapterPosition(adapterPosition : Int) : Any? {
+        val pos = changeListener.getPositionInsideSection(adapterPosition,this)
+        pos?.let {
+            if(pos < items.size){
+                return items[pos]
+            }
+        }
+        return null
     }
 
 }

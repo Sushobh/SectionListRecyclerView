@@ -8,10 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class ASection(changeListener: ChangeListener) : GroupedSection(changeListener) {
 
-    class ASectionRoot : Root() {
-         var isLoading = false
-    }
-    val root = ASectionRoot()
+
+
     private val groupedData = arrayListOf<GroupData>()
 
     val group1 = GroupData(
@@ -38,7 +36,7 @@ class ASection(changeListener: ChangeListener) : GroupedSection(changeListener) 
         groupedData.add(group1)
         groupedData.add(group2)
         groupedData.add(group3)
-        setData(groupedData,root)
+        setData(groupedData)
     }
 
     override fun getChildrenForPosition(groupPosition: Int): List<Any> {
@@ -48,17 +46,8 @@ class ASection(changeListener: ChangeListener) : GroupedSection(changeListener) 
 
     override fun getViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
-            1 -> {
-                LoaderScreenViewHolder(
-                    LayoutInflater.from(parent.context).inflate(
-                        R.layout.row_progressbar,
-                        parent,
-                        false
-                    )
-                )
-            }
             2 -> {
-                GroupViewHolder(
+                GroupViewHolder(changeListener,
                     LayoutInflater.from(parent.context).inflate(
                         R.layout.row_header,
                         parent,
@@ -67,7 +56,7 @@ class ASection(changeListener: ChangeListener) : GroupedSection(changeListener) 
                 )
             }
             3 -> {
-                ChildViewHolder(
+                ChildViewHolder(changeListener,
                     LayoutInflater.from(parent.context).inflate(
                         R.layout.row_child,
                         parent,
@@ -85,19 +74,6 @@ class ASection(changeListener: ChangeListener) : GroupedSection(changeListener) 
     override fun bindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
          val data = getItem(position)
          when(viewHolder){
-             is LoaderScreenViewHolder -> {
-                 if (data is ASectionRoot) {
-                     if (data.isLoading) {
-                         viewHolder.itemView.visibility = View.VISIBLE
-                         viewHolder.itemView.setLayoutParams(RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT,
-                             RecyclerView.LayoutParams.WRAP_CONTENT))
-                     } else {
-                         viewHolder.itemView.visibility = View.GONE
-                         viewHolder.itemView.setLayoutParams(RecyclerView.LayoutParams(0, 0))
-                     }
-                 }
-             }
-
              is GroupViewHolder -> {
                  if (data is GroupData) {
                      viewHolder.textView.text = data.text
@@ -114,9 +90,6 @@ class ASection(changeListener: ChangeListener) : GroupedSection(changeListener) 
 
     override fun getViewType(position: Int) : Int?{
         return when(getItem(position)){
-            is Root -> {
-                1
-            }
             is GroupData -> {
                 2
             }
@@ -131,7 +104,7 @@ class ASection(changeListener: ChangeListener) : GroupedSection(changeListener) 
     }
 
     override fun getViewTypes(): Set<Int> {
-        return hashSetOf(1, 2, 3)
+        return hashSetOf( 2, 3)
     }
 
 

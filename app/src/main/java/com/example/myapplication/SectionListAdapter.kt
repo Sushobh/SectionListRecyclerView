@@ -4,7 +4,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class SectionListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(),Section.ChangeListener{
+class SectionListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Section.ChangeListener{
+
+    open class PartOfSectionViewHolder(val sectionListener : Section.ChangeListener,val view : View) : RecyclerView.ViewHolder(view) {
+          fun findItemAtPosition() : Any? {
+              return sectionListener.findSectionForPosition(adapterPosition)?.getItemAtAdapterPosition(adapterPosition)
+          }
+    }
+
 
     var sections = arrayListOf<Section>()
 
@@ -29,14 +36,14 @@ class SectionListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(),Sec
         return viewHolder ?: object : RecyclerView.ViewHolder(View(parent.context)) {}
     }
 
-    fun findSectionForPosition(position: Int) : Section? {
+    override fun findSectionForPosition(adapterPosition: Int) : Section? {
         var currentLength = 0
-        sections.forEach {
-            val lastIndex = currentLength + (it.getLength())
-            if(position < lastIndex){
-                return it
+        sections.forEachIndexed { pos,item ->
+            val lastIndex = currentLength + (item.getLength())
+            if(adapterPosition < lastIndex){
+                return item
             }
-            currentLength = currentLength + it.getLength()
+            currentLength = currentLength + item.getLength()
         }
         return null
     }
@@ -44,7 +51,7 @@ class SectionListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(),Sec
     fun findStartIndexForSection(section : Section) : Int?{
         var currentLength = 0
         sections.forEach {
-            if(it == section){
+            if(it == section && it.getLength() > 0){
                 return currentLength
             }
             else {
@@ -99,6 +106,17 @@ class SectionListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>(),Sec
     override fun isViewTypeNumberAvailable(viewTypeNumber: Int, section: Section): Boolean {
         TODO("Not yet implemented")
     }
+
+    override fun getPositionInsideSection(adapterPosition: Int,section: Section): Int? {
+        val sectionPosition = findStartIndexForSection(section)
+        sectionPosition?.let {
+            val positionInsideSection = adapterPosition - sectionPosition
+            return positionInsideSection
+        }
+        return null
+    }
+
+
 
 
 }

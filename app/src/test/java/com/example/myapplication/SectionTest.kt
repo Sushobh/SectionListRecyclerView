@@ -13,14 +13,9 @@ class SectionTest {
 
     val changeListener = Mockito.mock(Section.ChangeListener::class.java)
 
-    val root = object : Section.Root() {
-
-    }
-
 
 
     class DummySection(changeListener: ChangeListener) : Section(changeListener){
-
 
 
         override fun getViewTypes(): Set<Int> {
@@ -36,21 +31,21 @@ class SectionTest {
 
         }
 
+        override fun getViewType(position: Int): Int? {
+            return 1
+        }
+
     }
 
     @Test
     fun test1(){
         val dummySection = DummySection(changeListener)
-        dummySection.addRoot(object : Section.Root() {
-
-        })
-        Assert.assertEquals(true,dummySection.addItems(getDummyList(5),1))
-        Assert.assertEquals(6,dummySection.getLength())
-        Assert.assertEquals(true,dummySection.addItems(getDummyList(3),6))
-        Mockito.verify(changeListener,Mockito.times(1)).onRangeAdded(1,5)
-        Mockito.verify(changeListener,Mockito.times(1)).onItemChanged(0)
-        Mockito.verify(changeListener,Mockito.times(1)).onRangeAdded(6,3)
-        Assert.assertEquals(9,dummySection.getLength())
+        Assert.assertEquals(true,dummySection.addItems(getDummyList(5),0))
+        Assert.assertEquals(5,dummySection.getLength())
+        Assert.assertEquals(true,dummySection.addItems(getDummyList(3),5))
+        Mockito.verify(changeListener,Mockito.times(1)).onRangeAdded(0,5,dummySection)
+        Mockito.verify(changeListener,Mockito.times(1)).onRangeAdded(5,3,dummySection)
+        Assert.assertEquals(8,dummySection.getLength())
     }
 
     /**
@@ -59,10 +54,10 @@ class SectionTest {
     @Test
     fun test12(){
         val dummySection = DummySection(changeListener)
-        dummySection.addRoot(root)
-        Assert.assertEquals(true,dummySection.addItems(getDummyList(5),1))
-        Assert.assertEquals(true,dummySection.addItems(getDummyList(10),6))
-        Assert.assertEquals(16,dummySection.getLength())
+
+        Assert.assertEquals(true,dummySection.addItems(getDummyList(5),0))
+        Assert.assertEquals(true,dummySection.addItems(getDummyList(10),5))
+        Assert.assertEquals(15,dummySection.getLength())
     }
 
 
@@ -72,16 +67,14 @@ class SectionTest {
     @Test
     fun test3(){
         val dummySection = DummySection(changeListener)
-        dummySection.addRoot(object : Section.Root() {
 
-        })
-        dummySection.addItems(getDummyList(5),1)
-        dummySection.addItems(getDummyList(4),6)
-        dummySection.removeItems(7,3)
+        dummySection.addItems(getDummyList(5),0)
+        dummySection.addItems(getDummyList(4),5)
+        dummySection.removeItems(7,2)
         Assert.assertEquals(7,dummySection.getLength())
         dummySection.removeItems(1,6)
         Assert.assertEquals(1,dummySection.getLength())
-        Mockito.verify(changeListener,Mockito.times(1)).onRangeRemoved(7,3)
+        Mockito.verify(changeListener,Mockito.times(1)).onRangeRemoved(7,2,dummySection)
     }
 
     /**
@@ -90,15 +83,12 @@ class SectionTest {
     @Test
     fun test5(){
         val dummySection = DummySection(changeListener)
-        dummySection.addRoot(object : Section.Root() {
 
-        })
-        dummySection.addItems(getDummyList(5),1)
-        dummySection.addItems(getDummyList(4),6)
+        dummySection.addItems(getDummyList(5),0)
+        dummySection.addItems(getDummyList(4),5)
         Assert.assertFalse(dummySection.removeItems(7,10))
         Assert.assertFalse(dummySection.removeItems(20,1))
-        Mockito.verify(changeListener,Mockito.times(0)).onRangeRemoved(Mockito.anyInt(),Mockito.anyInt())
-        Assert.assertEquals(10,dummySection.getLength())
+        Assert.assertEquals(9,dummySection.getLength())
     }
 
 
@@ -108,11 +98,11 @@ class SectionTest {
     @Test
     fun test4(){
         val dummySection = DummySection(changeListener)
-        dummySection.addRoot(root)
-        Assert.assertTrue(dummySection.addItems(getDummyList(5),1))
-        Assert.assertTrue(dummySection.addItems(getDummyList(4),6))
-        Assert.assertFalse(dummySection.addItems(getDummyList(10),11))
-        Assert.assertEquals(10,dummySection.getLength())
+
+        Assert.assertTrue(dummySection.addItems(getDummyList(5),0))
+        Assert.assertTrue(dummySection.addItems(getDummyList(4),5))
+        Assert.assertFalse(dummySection.addItems(getDummyList(10),10))
+        Assert.assertEquals(9,dummySection.getLength())
     }
 
     fun getDummyList(count : Int) : List<Any>{

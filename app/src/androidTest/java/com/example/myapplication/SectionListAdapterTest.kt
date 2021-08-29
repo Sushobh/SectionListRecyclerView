@@ -10,24 +10,22 @@ import java.lang.Exception
 
 class SectionListAdapterTest {
 
-    val root = object : Section.Root() {
 
-    }
     val changeListener = object : Section.ChangeListener {
-        override fun onRangeRemoved(startIndex: Int, count: Int) {
+        override fun onRangeRemoved(startIndex: Int, count: Int, section: Section) {
 
         }
 
-        override fun onRangeAdded(startIndex: Int, count: Int) {
+        override fun onRangeAdded(startIndex: Int, count: Int, section: Section) {
 
         }
 
-        override fun onItemChanged(index: Int) {
+        override fun onItemChanged(startIndex: Int, section: Section) {
 
         }
 
-        override fun isViewTypeNumberAvailable(viewTypeNumber: Int): Boolean {
-            return false
+        override fun isViewTypeNumberAvailable(viewTypeNumber: Int, section: Section): Boolean {
+               return true
         }
 
     }
@@ -37,9 +35,7 @@ class SectionListAdapterTest {
 
 
         init {
-            addRoot(object : Root() {
-
-            })
+           addItems(arrayListOf(Any()),0)
         }
 
         override fun getViewTypes(): Set<Int> {
@@ -67,7 +63,8 @@ class SectionListAdapterTest {
         val section2 = DummySection(changeListener)
         val section3 = DummySection(changeListener)
         val section4 = DummySection(changeListener)
-        val sectionListAdapter = SectionListAdapter(arrayListOf(section1,section2,section3,section4))
+        val sectionListAdapter = SectionListAdapter()
+        sectionListAdapter.sections = arrayListOf(section1,section2,section3,section4)
         Assert.assertEquals(section3,sectionListAdapter.findSectionForPosition(2))
         Assert.assertEquals(null,sectionListAdapter.findSectionForPosition(4))
     }
@@ -78,7 +75,8 @@ class SectionListAdapterTest {
         val section2 = DummySection(changeListener)
         val section3 = DummySection(changeListener)
         val section4 = DummySection(changeListener)
-        val sectionListAdapter = SectionListAdapter(arrayListOf(section1,section2,section3,section4))
+        val sectionListAdapter = SectionListAdapter()
+        sectionListAdapter.sections = arrayListOf(section1,section2,section3,section4)
 
         //Check 1
         section2.addItems(getDummyList(5),1)

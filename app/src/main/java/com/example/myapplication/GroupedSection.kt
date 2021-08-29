@@ -16,8 +16,8 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
 
 
 
-    fun <T : Root> setData(groups : List<Any>, root : T){
-        addRoot(root)
+    fun setData(groups : List<Any>){
+
         groupsData.addAll(groups)
         groups.forEachIndexed {position,item ->
             childrenMap.put(item,getChildrenForPosition(position))
@@ -30,14 +30,13 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
         val data = arrayListOf<Any>()
         groupsData.forEachIndexed { pos,item ->
             data.add(item)
-            groupCurrentIndex++ //Increment to make sure the group position is correct
             groupPositions.put(pos,groupCurrentIndex)
             val children = getChildrenOfGroup(item)
             data.addAll(children)
-            groupCurrentIndex = groupCurrentIndex + children.size
+            groupCurrentIndex = groupCurrentIndex + children.size + 1
             expansionStates.put(pos,true)
         }
-        addItems(data,1)
+        addItems(data,0)
     }
 
     fun isExpanded(groupPosition : Int) : Boolean {

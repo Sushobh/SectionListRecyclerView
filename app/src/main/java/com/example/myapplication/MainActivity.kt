@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         sectionAdapter.sections = arrayListOf(section,section1)
         recyclerView.adapter = sectionAdapter
 
-
     }
 
     fun postDelayed(time : Long,callback : () -> Unit){
