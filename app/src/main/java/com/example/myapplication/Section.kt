@@ -69,4 +69,13 @@ abstract class Section(protected val changeListener: ChangeListener) {
         return null
     }
 
+   fun getIndexOf(item : Any) : Int?{
+       return if(items.contains(item)) {
+           items.indexOf(item)
+       }
+       else {
+           null
+       }
+   }
+
 }

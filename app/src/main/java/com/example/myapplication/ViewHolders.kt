@@ -26,9 +26,7 @@ class ChildViewHolder(changeListener : Section.ChangeListener, view : View) : Se
     val textView = view.findViewById<TextView>(R.id.textview)
     init {
         view.setOnClickListener {
-            val item = findItemAtPosition()
 
-            toString()
         }
     }
 }

@@ -10,7 +10,7 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
 
 
 
-    private val groupPositions = hashMapOf<Int,Int>()
+
     private val groupsData = arrayListOf<Any>()
     private val childrenMap = hashMapOf<Any,List<Any>>()
     private val expansionStates = hashMapOf<Int,Boolean>()
@@ -33,7 +33,6 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
         val data = arrayListOf<Any>()
         groupsData.forEachIndexed { pos,item ->
             data.add(item)
-            groupPositions.put(pos,groupCurrentIndex)
             val children = getChildrenOfGroup(item)
             data.addAll(children)
             groupCurrentIndex = groupCurrentIndex + children.size + 1
@@ -41,6 +40,8 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
         }
         addItems(data,0)
     }
+
+
 
     fun isExpanded(groupPosition : Int) : Boolean {
         return expansionStates.getOrDefault(groupPosition,true)
@@ -53,7 +54,7 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
     fun collapseGroup(groupPosition: Int){
         if(!isExpanded(groupPosition)) return
         val groupAtPosition = groupsData[groupPosition]
-        val groupFlatIndex = groupPositions[groupPosition]
+        val groupFlatIndex = getIndexOf(groupAtPosition)
         val childrenOfGroup = getChildrenOfGroup(groupAtPosition)
         val childCount = childrenOfGroup.size
         if(childCount == 0){
@@ -65,6 +66,7 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
             }
             expansionStates.put(groupPosition,false)
         }
+
     }
 
     fun expandGroup(groupPosition: Int){
@@ -72,7 +74,7 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
         val groupAtPosition = groupsData[groupPosition]
         val childrenOfGroup = getChildrenOfGroup(groupAtPosition)
         val childCount = childrenOfGroup.size
-        val groupFlatIndex = groupPositions[groupPosition]
+        val groupFlatIndex = getIndexOf(groupAtPosition)
         if(childCount == 0){
             return
         }
@@ -82,17 +84,21 @@ abstract class GroupedSection(val listener: ChangeListener) : Section(listener){
             }
             expansionStates.put(groupPosition,true)
         }
+
     }
 
     fun toggleGroupFromAdapterPosition(adapterPosition : Int){
-        val internalPosition = changeListener.getPositionInsideSection(adapterPosition,this)
-        groupPositions.entries.forEach {
-            if(it.value == internalPosition){
-                if(isExpanded(it.key)){
-                    collapseGroup(it.key)
-                }
-                else {
-                    expandGroup(it.key)
+        val flatPositionOfClickedItem = changeListener.getPositionInsideSection(adapterPosition,this)
+        groupsData.forEachIndexed { compactPosition,item ->
+            val flatPosition = getIndexOf(item)
+            flatPosition?.let {
+                if(flatPositionOfClickedItem == flatPosition){
+                    if(isExpanded(compactPosition)){
+                        collapseGroup(compactPosition)
+                    }
+                    else {
+                        expandGroup(compactPosition)
+                    }
                 }
             }
         }
